@@ -38,6 +38,7 @@ class AbstractHDF5Dataset(ConfigDataset):
                           生データ，ラベル，ピクセル単位の重みを含むH5ファイルへのパス
         :param phase: 'train' for training, 'val' for validation, 'test' for testing; data augmentation is performed
             only during the 'train' phase
+                          train'はトレーニング、'val'は検証、'test'はテスト.データ増強は'train'フェーズでのみ行われる.
         :para'/home/adrian/workspace/ilastik-datasets/VolkerDeconv/train'm slice_builder_config: configuration of the SliceBuilder SliceBuilderの構成。
         :param transformer_config: data augmentation configuration データ補強の設定
         :param mirror_padding (int or tuple): number of voxels padded to each axis 各軸にパディングされるボクセルの数
@@ -47,6 +48,11 @@ class AbstractHDF5Dataset(ConfigDataset):
         :param a number between (0, 1]: specifies a fraction of ground truth instances to be sampled from the dense ground truth labels 
                                         高密度の基底真理ラベルからサンプリングされる基底真理インスタンスの割合を指定します。
         """
+
+        """
+        mirror paddingはパディング領域を境界のピクセルをミラーリングすることで埋める為、すべての入力画素が平等に畳み込まれるため均一なMapになっている。
+        """
+
         assert phase in ['train', 'val', 'test']
         if phase in ['train', 'val']:
             mirror_padding = None
