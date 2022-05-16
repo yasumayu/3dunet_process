@@ -762,6 +762,7 @@ class Transformer:
 
     def weight_transform(self):
         return self._create_transform('weight')
+        return self._create_transform('weight')
 
     @staticmethod
     def _transformer_class(class_name):

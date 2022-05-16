@@ -30,6 +30,9 @@ class AbstractHDF5Dataset(ConfigDataset):
                  mirror_padding=(16, 32, 32),
                  raw_internal_path='raw',
                  label_internal_path='label',
+                 label_internal_myosin_path='label_myosin',
+                 label_internal_colloid_path='label_colloid',
+                 label_internal_mitochon_path='label_mitochon',
                  weight_internal_path=None,
                  instance_ratio=None,
                  random_seed=0):
@@ -74,12 +77,24 @@ class AbstractHDF5Dataset(ConfigDataset):
             raw_internal_path = [raw_internal_path]
         if isinstance(label_internal_path, str):
             label_internal_path = [label_internal_path]
+        if isinstance(label_internal_myosin_path, str):
+            label_internal_myosin_path = [label_internal_myosin_path]
+        if isinstance(label_internal_colloid_path, str):
+            label_internal_colloid_path = [label_internal_colloid_path]
+        if isinstance(label_internal_mitochon_path, str):
+            label_internal_mitochon_path = [label_internal_mitochon_path]
         if isinstance(weight_internal_path, str):
             weight_internal_path = [weight_internal_path]
 
         internal_paths = list(raw_internal_path)
         if label_internal_path is not None:
             internal_paths.extend(label_internal_path)
+        if label_internal_myosin_path is not None:
+            internal_paths.extend(label_internal_myosin_path)
+        if label_internal_colloid_path is not None:
+            internal_paths.extend(label_internal_colloid_path)
+        if label_internal_mitochon_path is not None:
+            internal_paths.extend(label_internal_mitochon_path)
         if weight_internal_path is not None:
             internal_paths.extend(weight_internal_path)
 
@@ -96,7 +111,10 @@ class AbstractHDF5Dataset(ConfigDataset):
         if phase != 'test':
             # create label/weight transform only in train/val phase
             self.label_transform = self.transformer.label_transform()
-            self.labels = self.fetch_and_check(input_file, label_internal_path)
+            self.labels.extend(self.fetch_and_check(input_file, label_internal_path))
+            self.labels.extend(self.fetch_and_check(input_file, label_internal_myosin_path))
+            self.labels.extend(self.fetch_and_check(input_file, label_internal_colloid_path))
+            self.labels.extend(self.fetch_and_check(input_file, label_internal_mitochon_path))
 
             if self.instance_ratio is not None:
                 assert 0 < self.instance_ratio <= 1
@@ -173,11 +191,12 @@ class AbstractHDF5Dataset(ConfigDataset):
 
         if self.phase == 'test':
             # discard the channel dimension in the slices: predictor requires only the spatial dimensions of the volume
+            # スライスのチャンネル次元を削除：予測器はボリュームの空間次元のみを必要とする
             if len(raw_idx) == 4:
                 raw_idx = raw_idx[1:]
             return raw_patch_transformed, raw_idx
         else:
-            # get the slice for a given index 'idx'
+            # get the slice for a given index 'idx' 指定したインデックス 'idx' に対応するスライスを取得
             label_idx = self.label_slices[idx]
             label_patch_transformed = self._transform_patches(self.labels, label_idx, self.label_transform)
             if self.weight_maps is not None:
@@ -249,6 +268,7 @@ class AbstractHDF5Dataset(ConfigDataset):
                               label_internal_path=dataset_config.get('label_internal_path', 'label'),
                               weight_internal_path=dataset_config.get('weight_internal_path', None),
                               instance_ratio=instance_ratio, random_seed=random_seed)
+                              instance_ratio=instance_ratio, random_seed=random_seed)
                 datasets.append(dataset)
             except Exception:
                 logger.error(f'Skipping {phase} set: {file_path}', exc_info=True)
@@ -284,7 +304,10 @@ class StandardHDF5Dataset(AbstractHDF5Dataset):
                          transformer_config=transformer_config,
                          mirror_padding=mirror_padding,
                          raw_internal_path=raw_internal_path,
-                         label_internal_path=label_internal_path,
+                         label_internal_actin_path=label_internal_actin_path,
+                         label_internal_myosin_path=label_internal_myosin_path,
+                         label_internal_colloid_path=label_internal_colloid_path,
+                         label_internal_mitochon_path=label_internal_mitochon_path,
                          weight_internal_path=weight_internal_path,
                          instance_ratio=instance_ratio,
                          random_seed=random_seed)
