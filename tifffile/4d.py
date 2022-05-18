@@ -30,7 +30,7 @@ for i in range(0, z_test, step):
 
             img_4d[img[i][j][k]-1][i][j][k] = 1
 
-print(img_4d)
+print(img_4d.shape)
 
 name = os.path.basename(input_data_path)
 tif.imwrite(f'./{name}', img_4d)
