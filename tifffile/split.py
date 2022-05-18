@@ -5,6 +5,8 @@ import sys
 import tifffile as tif
 from tifffile.tifffile import imread
 
+
+
 #データのパス入力,読み込み
 input_data_path= sys.argv[1] 
 img = tif.imread(input_data_path)
