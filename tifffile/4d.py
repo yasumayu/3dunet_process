@@ -28,8 +28,12 @@ for i in range(0, z_test, step):
             if img[i][j][k] == 0:
                 continue
 
+            elif img[i][j][k] == 5:
+                continue
+
             img_4d[img[i][j][k]-1][i][j][k] = 1
 
+img_4d = img_4d.astype(int)
 print(img_4d.shape)
 
 name = os.path.basename(input_data_path)
