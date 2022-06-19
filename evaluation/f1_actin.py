@@ -95,10 +95,9 @@ def main():
             f.write(f'Threshold:{thresh}\n')
             f.write(f'F1:{f1}\n')
             f.write(f'F1_3:{f1_3}\n')
-            f.write(f'F1_5:{f1_3}\n')
-            f.write(f'F1_7:{f1_5}\n')
-            f.write(f'F1_3:{f1_7}\n')
-            f.write(f'F1_3:{f1_9}\n')
+            f.write(f'F1_5:{f1_5}\n')
+            f.write(f'F1_7:{f1_7}\n')
+            f.write(f'F1_9:{f1_9}\n')
 
 
 

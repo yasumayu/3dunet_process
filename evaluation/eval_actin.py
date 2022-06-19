@@ -90,7 +90,8 @@ def main():
             sum_tn += tn
             sum_fp += fp
             sum_fn += fn
-            print(sum_tp)
+            sum = sum_tp + sum_tn + sum_fp + sum_fn
+            print(sum)
 
         precision, recall, iou, f1, f1_3 = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)
         with open('threshold_actin.txt', 'a') as f:

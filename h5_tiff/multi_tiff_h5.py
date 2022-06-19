@@ -34,6 +34,7 @@ def h5totiff(z_num, x_num, y_num , dset):
         colloid_slice[i][0:x_num][0:y_num]  += dset[2][i][0:x_num][0:y_num]
         mitochon_slice[i][0:x_num][0:y_num]  += dset[3][i][0:x_num][0:y_num]
     
+    print(f'actinslice:{actin_slice.shape}')
     return actin_slice, myosin_slice, colloid_slice, mitochon_slice
 
 def combine(img_dict):
@@ -44,7 +45,7 @@ def combine(img_dict):
 
     #k = 0
     for j in range(0, split_num, split_step):
-        split_img.append(np.concatenate(img_dict[j], img_dict[j+1], img_dict[j+2], axis=2))
+        split_img.append(np.concatenate([img_dict[j], img_dict[j+1], img_dict[j+2]], axis=2))
         #print(v_split_img[k])
         #k += 1
         
@@ -67,7 +68,7 @@ def main():
     dict_mitochon = {}
 
     step = 1
-    for index in range(0,8,step):
+    for index in range(0,9,step):
 
         z, x, y, dset = h5read(input_h5_dir,index)
         #split0~8を辞書型で格納
