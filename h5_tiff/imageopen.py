@@ -40,6 +40,7 @@ save_path = f'./{name}/'
 # xを動かしてyz面のスライスの画像を保存
 for i in range(0, x_num, slice_step):
     image = dset[0][i][0:y_num][0:z_num]
+    print(image.dtype)
     filename = f'slice{str(i).zfill(5)}.tiff'
     #plt.imsave(save_path+filename, image)
     plt.imshow(image, cmap='gray')
