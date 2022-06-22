@@ -1,90 +1,63 @@
-from datetime import datetime
-from re import A
 import sys
-from tkinter import TOP
+from tkinter import Y
 import numpy as np
 import tifffile as tif
-import datetime
 
-"""
-ミトコンドリアが多く含まれてるファイルを除くファイルで計算
-0 1 2
-3 4 5
-6 7 8
-"""
+#221x1899x1899のファイルで計算
 
 
-def file_read(input_test_dir, input_pre_dir, index):
-    test = np.array(tif.imread(f'{input_test_dir}split_R_seg_{index}.tiff'))
-    pred = np.array(tif.imread(f'{input_pre_dir}split_actin_MeanIOU_prediction_{index}.tiff'))
+def file_read(input_test_path, input_pre_path):
+    test = np.array(tif.imread(input_test_path))
+    pred = np.array(tif.imread(input_pre_path))
+
+    print(test.shape)
 
     return test, pred
 
 
-def count(test, pred, thresh_s, thresh_e):
-
+def count(test, pred, thresh):
     z_test, x_test, y_test = map(int, test.shape)
-    z_pred, x_pred, y_pred = map(int, pred.shape)
-    step = 2
+    #z_pred, x_pred, y_pred = map(int, pred.shape)
 
-    pred_thresh = np.zeros(pred.shape)
-    
-    tp = np.zeros(thresh_e + 1)
-    fp = np.zeros(thresh_e + 1)
-    fn = np.zeros(thresh_e + 1)
-    tn = np.zeros(thresh_e + 1)
-    print(tp.shape)
+    tp, fp, tn, fn = 0, 0, 0, 0
+    pred_thresh = pred > thresh
 
-    for i in range(40, 50):
-        for j in range(300, 350):
-            for k in range(300, 350):
-                for l in range (thresh_s, thresh_e, step):
-              
-                    pred_thresh[i][j][k] = pred[i][j][k] > l
+    """
+    for i in range(0, z_test):
+        for j in range(0, x_test):
+            for k in range(0, y_test):
+                if pred_thresh[i][j][k] == 1 and test[i][j][k] == 1:
+                    tp = tp + 1
 
-                    #print(pred_thresh[i][j][k])
-                    #print(test[i][j][k])
-                    if pred_thresh[i][j][k] == 1.0 and test[i][j][k] == 1:
+                    print(f'OK')
 
-                        #print(f'tpOK')
-                        tp_count = tp[l]
-                        #print(tp_count)
-                        tp_count += 1
-                        #print(tp_count =1)
-                        tp[l] = tp_count
+                elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 1:
+                    fn = fn + 1
 
-                    elif pred_thresh[i][j][k] == 0.0 and test[i][j][k] == 1:
+                elif pred_thresh[i][j][k] == 1 and 2 <= test[i][j][k] <= 4:
+                    fp = fp + 1
 
-                        #print(f'fnOK')
-                        fn_count = fn[l]
-                        fn_count += 1
-                        fn[l] = fn_count
+                elif pred_thresh[i][j][k] == 0 and 2 <= test[i][j][k] <= 4:
+                    tn = tn + 1
+    """
+    for i in range(0, x_test):
+        for j in range(0,y_test):
+            if pred_thresh[48][i][j] == 1 and test[48][i][j] == 1:
+                tp = tp + 1
 
-                    elif pred_thresh[i][j][k] == 1.0 and 2 <= test[i][j][k] <= 4:
-                         
-                        #print(f'fpOK') 
-                        fp_count = fp[l]
-                        fp_count += 1
-                        fp[l] = fp_count
-                        
-                    elif pred_thresh[i][j][k] == 0.0 and 2 <= test[i][j][k] <= 4:
-                        
-                        #print(f'tnOK')
-                        tn_count = tn[l]
-                        tn_count += 1
-                        tn[l] = tn_count
+            elif pred_thresh[48][i][j] == 0 and test[48][i][j] == 1:
+                fn = fn + 1
+
+            elif pred_thresh[48][i][j] == 1 and 2 <= test[48][i][j] <= 4:
+                fp = fp + 1
+
+            elif pred_thresh[48][i][j] == 0 and 2 <= test[48][i][j] <= 4:
+                tn = tn + 1
+
 
     return tp, fn, fp, tn
 
-
-def evaluate(sum_tp, sum_tn, sum_fp, sum_fn, thresh_e):
-
-    precision = np.zeros(thresh_e + 1)
-    recall  = np.zeros(thresh_e + 1)
-    iou = np.zeros(thresh_e + 1)
-    f1 = np.zeros(thresh_e + 1)
-    f1_3 = np.zeros(thresh_e + 1)
-    f1_5 = np.zeros(thresh_e + 1)
+def evaluate(sum_tp, sum_tn, sum_fp, sum_fn):
 
     # Precision Precision =  TP / (TP + FP)
     precision = sum_tp / (sum_tp + sum_fp)
@@ -106,7 +79,6 @@ def evaluate(sum_tp, sum_tn, sum_fp, sum_fn, thresh_e):
     f1_3 = (3 * sum_tp) / (3 * sum_tp + sum_fp + sum_fn)
     print(f'f1_3:{f1_3}')
 
-    #f1_5 score f1_5 = (5*TP)/(5*TP+FP+FN)
     f1_5 = (5 * sum_tp) / (5 * sum_tp + sum_fp + sum_fn)
     print(f'f1_5:{f1_5}')
 
@@ -115,55 +87,37 @@ def evaluate(sum_tp, sum_tn, sum_fp, sum_fn, thresh_e):
 
 def main():
     # data path input. read
-    input_test_dir = sys.argv[1]
-    input_pre_dir = sys.argv[2]
+    input_test_path = sys.argv[1]
+    input_pre_path = sys.argv[2]
     thresh_s = int(sys.argv[3])
     thresh_e = int(sys.argv[4])
-    index_list = list(map(int, sys.argv[5:]))
 
-    dt_st = datetime.datetime.now()
-    print(f'start:{dt_st}')
+    threshold_step = 2
+    for thresh in range(thresh_s, thresh_e, threshold_step):
 
-    tp_sum = np.zeros(thresh_e + 1)
-    fp_sum = np.zeros(thresh_e + 1)
-    fn_sum = np.zeros(thresh_e + 1)
-    tn_sum = np.zeros(thresh_e + 1)
+        print(thresh)
 
-    for index in index_list:
+        sum_tp, sum_tn, sum_fp, sum_fn = 0, 0, 0, 0
 
-        test, pred = file_read(input_test_dir, input_pre_dir, index)
-        tp, fn, fp, tn = count(test, pred, thresh_s, thresh_e)
+        test, pred = file_read(input_test_path, input_pre_path)
 
-        tp_sum += tp
-        fp_sum += fp
-        fn_sum += fn
-        tn_sum += tn
+        sum_tp, sum_fn, sum_fp, sum_tn = count(test, pred, thresh)
 
-        print(f'tp:{tp_sum[200]}')
-        print(f'tn:{tn_sum[200]}')
-        print(f'fn:{fn_sum[200]}')
-        print(f'fp:{fp_sum[200]}')
+        precision, recall, iou, f1, f1_3,f1_5  = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)
 
-    precision, recall, iou, f1, f1_3, f1_5 = evaluate(tp_sum, tn_sum, fp_sum, fn_sum, thresh_e)
-
-    for i in range(thresh_s, thresh_e, 2):
-        with open('threshold_actin_test.txt', 'a') as f:
-
-            f.write(f'Threshold:{i}\n')
-            f.write(f'TN:{tn_sum[i]} ')
-            f.write(f'TP:{tp_sum[i]} ')
-            f.write(f'FN:{fn_sum[i]} ')
-            f.write(f'FP:{fp_sum[i]}\n')
-            f.write(f'Precision:{precision[i]} ')
-            f.write(f'Reacall:{recall[i]} ')
-            f.write(f'F1:{f1[i]} ')
-            f.write(f'IoU:{iou[i]} ')
-            f.write(f'F1_3:{f1_3[i]} ')
-            f.write(f'f1_5:{f1_5[i]}\n')
-    
-    dt_end = datetime.datetime.now()
-    print(f'finish:{dt_end}')
-
+        with open('threshold_actin_multi.txt', 'a') as f:
+            f.write(f'Threshold:{thresh}\n')
+            f.write(f'TN:{sum_tn} ')
+            f.write(f'TP:{sum_tp} ')
+            f.write(f'FN:{sum_fn} ')
+            f.write(f'FP:{sum_fp}\n')
+            f.write(f'Precision:{precision} ')
+            f.write(f'Reacall:{recall} ')
+            f.write(f'IoU:{iou} ')
+            f.write(f'F1:{f1} ')
+            f.write(f'F1_3:{f1_3} ')
+            f.write(f'F1_5:{f1_5}\n')
+            
 
 
 if __name__ == '__main__':
