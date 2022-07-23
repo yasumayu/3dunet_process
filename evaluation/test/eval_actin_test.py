@@ -1,5 +1,4 @@
 import sys
-from tkinter import Y
 import numpy as np
 import tifffile as tif
 
@@ -103,8 +102,8 @@ def main():
 
         sum_tp, sum_fn, sum_fp, sum_tn = count(test, pred, thresh)
 
-        precision, recall, iou, f1, f1_3,f1_5  = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)
-
+        precision, recall, iou, f1, f1_3,f1_5  = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)   
+        """
         with open('threshold_actin_multi.txt', 'a') as f:
             f.write(f'Threshold:{thresh}\n')
             f.write(f'TN:{sum_tn} ')
@@ -117,6 +116,8 @@ def main():
             f.write(f'F1:{f1} ')
             f.write(f'F1_3:{f1_3} ')
             f.write(f'F1_5:{f1_5}\n')
+
+        """
             
 
 
