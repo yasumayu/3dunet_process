@@ -23,34 +23,43 @@ def count(test, pred, thresh):
     #z_pred, x_pred, y_pred = map(int, pred.shape)
 
     tp, fp, tn, fn = 0, 0, 0, 0
+    print(pred)
     pred_thresh = pred > thresh
+    print(pred_thresh)
+    print(np.count_nonzero(pred_thresh == 1))
+    print(np.count_nonzero(pred_thresh == 0))
 
     for i in range(0, z_test):
         for j in range(0, x_test):
             for k in range(0, y_test):
                 if pred_thresh[i][j][k] == 1 and test[i][j][k] == 2:
                     tp = tp + 1
+                    #print('tp')
 
                 elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 2:
                     fn = fn + 1
+                    #print('fn')
 
                 elif pred_thresh[i][j][k] == 1 and  3 <= test[i][j][k] <= 4:
                     fp = fp + 1
+                    #print('fp')
                 
                 elif pred_thresh[i][j][k] == 1 and test[i][j][k] == 1:
                     fp = fp + 1
+                    #print('fp')
 
                 elif pred_thresh[i][j][k] == 0 and 3 <= test[i][j][k] <= 4:
                     tn = tn + 1
+                    #print('tn')
                 
                 elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 1:
                     tn = tn + 1
+                    #print('tn')
+
     print(tp)
+    print(fn)
     print(tn)
     print(fp)
-    print(fn)
-
-
     return tp, fn, fp, tn
 
 def evaluate(sum_tp, sum_tn, sum_fp, sum_fn):

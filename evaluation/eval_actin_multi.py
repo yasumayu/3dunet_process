@@ -25,6 +25,8 @@ def count(test, pred, thresh):
     tp, fp, tn, fn = 0, 0, 0, 0
     pred_thresh = pred > thresh
 
+    print(np.count_nonzero(pred_thresh == 1))
+
     for i in range(0, z_test):
         for j in range(0, x_test):
             for k in range(0, y_test):
