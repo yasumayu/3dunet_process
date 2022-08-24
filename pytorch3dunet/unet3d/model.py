@@ -19,22 +19,46 @@ class Abstract3DUNet(nn.Module):
             It's up to the user of the class to interpret the out_channels and
             use the proper loss criterion during training (i.e. CrossEntropyLoss (multi-class)
             or BCEWithLogitsLoss (two-class) respectively)
+            out_channels をどのように解釈するかは,クラスのユーザ次第.
+            学習時に適切な損失基準（例えばCrossEntropyLoss（マルチクラス）あるいは BCEWithLogitsLoss（2クラス））を用いること
+
         f_maps (int, tuple): number of feature maps at each level of the encoder; if it's an integer the number
             of feature maps is given by the geometric progression: f_maps ^ k, k=1,2,3,4
+            エンコーダの各レベルにおける特徴マップの数; 整数の場合、特徴マップの数は幾何級数で与えられる。
+            整数の場合、特徴マップの数は幾何級数で与えられる: f_maps ^ k, k=1,2,3,4
+
         final_sigmoid (bool): if True apply element-wise nn.Sigmoid after the
             final 1x1 convolution, otherwise apply nn.Softmax. MUST be True if nn.BCELoss (two-class) is used
             to train the model. MUST be False if nn.CrossEntropyLoss (multi-class) is used to train the model.
+            Trueの場合,最後の1x1コンボリューションの後に要素ごとにnn.Sigmoidを適用し、そうでなければ nn.Softmax を適用する.
+            モデルの学習に nn.BCELoss (2クラス) が使用されている場合,Trueでなければならない。
+            nn.CrossEntropyLoss (多クラス) がモデルの学習に使用される場合は False でなければならない。
+
         basic_module: basic model for the encoder/decoder (DoubleConv, ExtResNetBlock, ....)
+            エンコーダ/デコーダの基本モデル (DoubleConv, ExtResNetBlock, ......)
+
         layer_order (string): determines the order of layers
             in `SingleConv` module. e.g. 'crg' stands for Conv3d+ReLU+GroupNorm3d.
             See `SingleConv` for more info
-        num_groups (int): number of groups for the GroupNorm
+
+        num_groups (int): number of groups for the GroupNorm グループ正規化
+            GroupNormの参考:<https://pytorch.org/docs/stable/generated/torch.nn.GroupNorm.html>
+                           <https://wandb.ai/wandb_fc/GroupNorm/reports/Group-Normalization-in-Pytorch-With-Examples---VmlldzoxMzU0MzMy>
+
+
         num_levels (int): number of levels in the encoder/decoder path (applied only if f_maps is an int)
+            エンコーダー/デコーダー パスのレベル数 (f_maps が int の場合にのみ適用)
+
         is_segmentation (bool): if True (semantic segmentation problem) Sigmoid/Softmax normalization is applied
             after the final convolution; if False (regression problem) the normalization layer is skipped at the end
+            Trueの場合（セマンティックセグメンテーション問題)最後の畳み込みの後にSigmoid/Softmaxによる正規化を行う
+
         testing (bool): if True (testing mode) the `final_activation` (if present, i.e. `is_segmentation=true`)
             will be applied as the last operation during the forward pass; if False the model is in training mode
             and the `final_activation` (even if present) won't be applied; default: False
+            True (テスト モード) の場合、「final_activation」(つまり「is_segmentation=true」) は、フォワード パス中の最後の操作として適用されます。
+            False の場合、モデルはトレーニング モードであり、`final_activation` (存在する場合でも) は適用されません。デフォルト: False
+
         conv_kernel_size (int or tuple): size of the convolving kernel in the basic_module
         pool_kernel_size (int or tuple): the size of the window
         conv_padding (int or tuple): add zero-padding added to all three sides of the input
@@ -53,11 +77,11 @@ class Abstract3DUNet(nn.Module):
         assert isinstance(f_maps, list) or isinstance(f_maps, tuple)
         assert len(f_maps) > 1, "Required at least 2 levels in the U-Net"
 
-        # create encoder path
+        # create encoder path(buildingblocks.pyの中)
         self.encoders = create_encoders(in_channels, f_maps, basic_module, conv_kernel_size, conv_padding, layer_order,
                                         num_groups, pool_kernel_size)
 
-        # create decoder path
+        # create decoder path(buildingblocks.pyの中)
         self.decoders = create_decoders(f_maps, basic_module, conv_kernel_size, conv_padding, layer_order, num_groups,
                                         upsample=True)
 

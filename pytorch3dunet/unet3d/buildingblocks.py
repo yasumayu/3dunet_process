@@ -20,10 +20,10 @@ def create_conv(in_channels, out_channels, kernel_size, order, num_groups, paddi
         kernel_size(int or tuple): size of the convolving kernel
         order (string): order of things, e.g.
             'cr' -> conv + ReLU
-            'gcr' -> groupnorm + conv + ReLU
+            'gcr' -> groupnorm(グループ正規化) + conv + ReLU
             'cl' -> conv + LeakyReLU
             'ce' -> conv + ELU
-            'bcr' -> batchnorm + conv + ReLU
+            'bcr' -> batchnorm(バッチ正規化) + conv + ReLU
         num_groups (int): number of groups for the GroupNorm
         padding (int or tuple): add zero-padding added to all three sides of the input
 
