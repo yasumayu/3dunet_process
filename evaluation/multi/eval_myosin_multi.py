@@ -5,7 +5,7 @@ import tifffile as tif
 
 """
 221x1899x1899のファイルで計算
-
+端のvoxel
 """
 
 
