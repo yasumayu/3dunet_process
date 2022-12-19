@@ -55,7 +55,7 @@ def negative(test):
 
 
 def count(test, pred, thresh):
-    #z_test, x_test, y_test = map(int, test.shape)
+    z_test, x_test, y_test = map(int, test.shape)
     #z_pred, x_pred, y_pred = map(int, pred.shape)
     tp, fp, tn, fn = 0, 0, 0, 0
     pred_thresh = pred > thresh
@@ -71,10 +71,10 @@ def count(test, pred, thresh):
                 elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 1:
                     fn = fn + 1
 
-                elif pred_thresh[i][j][k] == 1 and 2 <= test[i][j][k] <= 4:
+                elif pred_thresh[i][j][k] == 1 and 2 <= test[i][j][k] <= 5:
                     fp = fp + 1
 
-                elif pred_thresh[i][j][k] == 0 and 2 <= test[i][j][k] <= 4:
+                elif pred_thresh[i][j][k] == 0 and 2 <= test[i][j][k] <= 5:
                     tn = tn + 1
 
     return tp, fn, fp, tn

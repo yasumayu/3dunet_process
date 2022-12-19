@@ -11,7 +11,7 @@ import tifffile as tif
 
 def h5read(input_h5_dir, split):
 
-    f = h5py.File((f'{input_h5_dir}split_R_{split}_predictions.h5'), 'r')
+    f = h5py.File((f'{input_h5_dir}split_raw_bilateral_{split}_predictions.h5'), 'r')
     pre_dset = f['predictions']
 
     channel, z_num, x_num, y_num = map(int, pre_dset.shape)
@@ -22,7 +22,6 @@ def h52tiff(channel, z_num, x_num, y_num, dset):
 
     slice_step = 1
     img = np.zeros((z_num, x_num, y_num))
-
     for i in range(0, z_num, slice_step):
         img[i][0:x_num][0:y_num] += dset[channel][i][0:x_num][0:y_num]
     
