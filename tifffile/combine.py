@@ -46,7 +46,7 @@ print(img.shape)
 #tiffで出力
 scope_dir = scope_dir if scope_dir[-1] != '/' else scope_dir[:-1] 
 name = scope_dir.split('/')[-1]
-tif.imwrite(f'{scope_dir}/{name}.tiff',img)
+tif.imwrite(f'{scope_dir}/{name}.tif',img)
 
 
 
