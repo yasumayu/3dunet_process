@@ -30,25 +30,27 @@ def negative(test):
         for j in range(0, y_test-2):
             for k in range(0, x_test-2):
                 if test[i][j][k] == 0 and test[i][j][k+1] == 0 and test[i][j][k+2] == 2:
-                    test_add_negative[i][j][k] == 5
-                    test_add_negative[i][j][k+1] == 5
+                    test_add_negative[i][j][k] = 5
+                    test_add_negative[i][j][k+1] = 5
                 
                 elif test[i][j][k] == 0 and test[i][j][k+1] == 2 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k] == 5
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k] = 5
+                    test_add_negative[i][j][k+2] = 5
 
                 elif test[i][j][k] == 0 and test[i][j][k+1] == 2 and test[i][j][k+2] == 2:
-                    test_add_negative[i][j][k] == 5
+                    test_add_negative[i][j][k] = 5
                 
                 elif test[i][j][k] == 2 and test[i][j][k+1] == 0 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k+1] == 5
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k+1] = 5
+                    test_add_negative[i][j][k+2] = 5
                 
                 elif test[i][j][k] == 2 and test[i][j][k+1] == 0 and test[i][j][k+2] == 2:
-                    test_add_negative[i][j][k+1] == 5
+                    test_add_negative[i][j][k+1] = 5
+                    print(test_add_negative[i][j][k+1])
 
                 elif test[i][j][k] == 2 and test[i][j][k+1] == 2 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k+2] = 5
+                    print(test_add_negative[i][j][k+2])
 
 
     return test_add_negative
@@ -88,7 +90,7 @@ def count(test, pred, thresh):
                 elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 1:
                     tn = tn + 1
                     #print('tn')
-
+                
     return tp, fn, fp, tn
 
 def evaluate(sum_tp, sum_tn, sum_fp, sum_fn):
@@ -132,10 +134,6 @@ def main():
     #テストデータにNegativeを追加
     test = negative(test_data)
 
-
-
-
-
     threshold_step = 2
     for thresh in range(thresh_s, thresh_e, threshold_step):
 
@@ -158,10 +156,8 @@ def main():
             f.write(f'Precision:{precision} ')
             f.write(f'Reacall:{recall} ')
             f.write(f'IoU:{iou} ')
-            f.write(f'F1:{f1} ')
-            f.write(f'F1_3:{f1_3} ')
-            f.write(f'F1_5:{f1_5}\n')
-            
+            f.write(f'F1:{f1}\n')
+           
 
 
 if __name__ == '__main__':

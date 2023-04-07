@@ -26,29 +26,30 @@ def negative(test):
     z_test, x_test, y_test = map(int, test.shape)
     test_add_negative = test
 
-    for i in range(0, z_test-2):
-        for j in range(0, y_test-2):
-            for k in range(0, x_test-2):
+    for i in range(0, z_test-2, 1):
+        for j in range(0, y_test-2, 1):
+            for k in range(0, x_test-2, 3):
                 if test[i][j][k] == 0 and test[i][j][k+1] == 0 and test[i][j][k+2] == 1:
-                    test_add_negative[i][j][k] == 5
-                    test_add_negative[i][j][k+1] == 5
+                    test_add_negative[i][j][k] = 5
+                    test_add_negative[i][j][k+1] = 5
                 
                 elif test[i][j][k] == 0 and test[i][j][k+1] == 1 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k] == 5
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k] = 5
+                    test_add_negative[i][j][k+2] = 5
 
                 elif test[i][j][k] == 0 and test[i][j][k+1] == 1 and test[i][j][k+2] == 1:
-                    test_add_negative[i][j][k] == 5
+                    test_add_negative[i][j][k] = 5
                 
                 elif test[i][j][k] == 1 and test[i][j][k+1] == 0 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k+1] == 5
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k+1] = 5
+                    test_add_negative[i][j][k+2] = 5
                 
                 elif test[i][j][k] == 1 and test[i][j][k+1] == 0 and test[i][j][k+2] == 1:
-                    test_add_negative[i][j][k+1] == 5
+                    test_add_negative[i][j][k+1] = 5
 
                 elif test[i][j][k] == 1 and test[i][j][k+1] == 1 and test[i][j][k+2] == 0:
-                    test_add_negative[i][j][k+2] == 5
+                    test_add_negative[i][j][k+2] = 5
+                    print('5')
 
 
     return test_add_negative
@@ -62,9 +63,9 @@ def count(test, pred, thresh):
 
     print(np.count_nonzero(pred_thresh == 1))
 
-    for i in range(0, z_test-2):
-        for j in range(0, x_test-2):
-            for k in range(0, y_test-2):
+    for i in range(0, z_test):
+        for j in range(0, x_test):
+            for k in range(0, y_test):
                 if pred_thresh[i][j][k] == 1 and test[i][j][k] == 1:
                     tp = tp + 1
 
@@ -120,9 +121,6 @@ def main():
     #テストデータにNegativeを追加
     test = negative(test_data)
 
-
-
-
     threshold_step = 2
     for thresh in range(thresh_s, thresh_e, threshold_step):
 
@@ -147,9 +145,7 @@ def main():
             f.write(f'Precision:{precision} ')
             f.write(f'Reacall:{recall} ')
             f.write(f'IoU:{iou} ')
-            f.write(f'F1:{f1} ')
-            f.write(f'F1_3:{f1_3} ')
-            f.write(f'F1_5:{f1_5}\n')
+            f.write(f'F1:{f1}\n')
             
 
 
