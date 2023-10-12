@@ -8,22 +8,23 @@ from tifffile.tifffile import imread
 
 """
 マルチチャンネル用の4次元tifffileの作成
-channnel x Z x X x Y
+channnel数 x Z x X x Y
 """
 
 input_data_path = sys.argv[1] 
 img = tif.imread(input_data_path)
 img = np.array(img)
+
 print(img.shape)
-z_test, x_test, y_test = map(int, img.shape)
+z_test, y_test, x_test = map(int, img.shape)
 
 #4D配列
-img_4d = np.zeros((4,221,633,633))
+img_4d = np.zeros((4,z_test,y_test,x_test))
 
 step = 1
 for i in range(0, z_test, step):
-    for j in range(0, x_test, step):
-        for k in range(0, y_test, step):
+    for j in range(0, y_test, step):
+        for k in range(0, x_test, step):
 
             if img[i][j][k] == 0:
                 continue

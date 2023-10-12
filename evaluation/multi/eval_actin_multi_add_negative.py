@@ -3,9 +3,10 @@ from tkinter import Y
 import numpy as np
 import tifffile as tif
 
+
+
 """
 221x1899x1899のファイルで計算
-フィラメンとの周辺をNegativeに判定する
 testについて
 0:null
 1:actin
@@ -23,7 +24,7 @@ def file_read(input_data_path):
 
 
 def negative(test):
-    z_test, x_test, y_test = map(int, test.shape)
+    z_test, y_test, x_test = map(int, test.shape)
     test_add_negative = test
 
     for i in range(0, z_test-2, 1):
@@ -32,7 +33,7 @@ def negative(test):
                 if test[i][j][k] == 0 and test[i][j][k+1] == 0 and test[i][j][k+2] == 1:
                     test_add_negative[i][j][k] = 5
                     test_add_negative[i][j][k+1] = 5
-                
+	
                 elif test[i][j][k] == 0 and test[i][j][k+1] == 1 and test[i][j][k+2] == 0:
                     test_add_negative[i][j][k] = 5
                     test_add_negative[i][j][k+2] = 5
@@ -49,23 +50,23 @@ def negative(test):
 
                 elif test[i][j][k] == 1 and test[i][j][k+1] == 1 and test[i][j][k+2] == 0:
                     test_add_negative[i][j][k+2] = 5
-                    print('5')
 
 
     return test_add_negative
 
 
 def count(test, pred, thresh):
-    z_test, x_test, y_test = map(int, test.shape)
+    z_test, y_test, x_test = map(int, test.shape)
     #z_pred, x_pred, y_pred = map(int, pred.shape)
-    tp, fp, tn, fn = 0, 0, 0, 0
+    tp, fp, tn, fn, arround_tn = 0, 0, 0, 0, 0
+    negative = 0
     pred_thresh = pred > thresh
 
-    print(np.count_nonzero(pred_thresh == 1))
+    #print(np.count_nonzero(pred_thresh == 1))
 
     for i in range(0, z_test):
-        for j in range(0, x_test):
-            for k in range(0, y_test):
+        for j in range(0, y_test):
+            for k in range(0, x_test):
                 if pred_thresh[i][j][k] == 1 and test[i][j][k] == 1:
                     tp = tp + 1
 
@@ -74,11 +75,15 @@ def count(test, pred, thresh):
 
                 elif pred_thresh[i][j][k] == 1 and 2 <= test[i][j][k] <= 5:
                     fp = fp + 1
+                
+                elif pred_thresh[i][j][k] == 0 and test[i][j][k] == 5:
+                    tn = tn + 1
+                    arround_tn =  + 1
 
-                elif pred_thresh[i][j][k] == 0 and 2 <= test[i][j][k] <= 5:
+                elif pred_thresh[i][j][k] == 0 and 2 <= test[i][j][k] <= 4:
                     tn = tn + 1
 
-    return tp, fn, fp, tn
+    return tp, fn, fp, tn, arround_tn
 
 def evaluate(sum_tp, sum_tn, sum_fp, sum_fn):
 
@@ -121,27 +126,31 @@ def main():
     #テストデータにNegativeを追加
     test = negative(test_data)
 
+    #tif.imwrite('negative_add_actin_seg.tif', test)
+
+
     threshold_step = 2
     for thresh in range(thresh_s, thresh_e, threshold_step):
 
         print(thresh)
 
-        sum_tp, sum_tn, sum_fp, sum_fn = 0, 0, 0, 0
+        sum_tp, sum_tn, sum_fp, sum_fn, sum_arround_tn= 0, 0, 0, 0, 0
 
         pred = file_read(input_pre_path)
 
         
 
-        sum_tp, sum_fn, sum_fp, sum_tn = count(test, pred, thresh)
+        sum_tp, sum_fn, sum_fp, sum_tn, sum_arround_tn = count(test, pred, thresh)
 
         precision, recall, iou, f1, f1_3,f1_5  = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)
 
-        with open('threshold_actin_multi_add_negative.txt', 'a') as f:
+        with open('threshold_actin_multi_add_negative_230809.txt', 'a') as f:
             f.write(f'Threshold:{thresh} ')
             f.write(f'TN:{sum_tn} ')
             f.write(f'TP:{sum_tp} ')
             f.write(f'FN:{sum_fn} ')
             f.write(f'FP:{sum_fp} ')
+            #f.write(f'around_TN:{sum_arround_tn} ')
             f.write(f'Precision:{precision} ')
             f.write(f'Reacall:{recall} ')
             f.write(f'IoU:{iou} ')

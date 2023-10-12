@@ -147,7 +147,7 @@ def main():
 
         precision, recall, iou, f1, f1_3,f1_5  = evaluate(sum_tp, sum_tn, sum_fp, sum_fn)
 
-        with open('threshold_myosin_multi_add_negative.txt', 'a') as f:
+        with open('threshold_myosin_multi_add_negative_230809.txt', 'a') as f:
             f.write(f'Threshold:{thresh} ')
             f.write(f'TN:{sum_tn} ')
             f.write(f'TP:{sum_tp} ')

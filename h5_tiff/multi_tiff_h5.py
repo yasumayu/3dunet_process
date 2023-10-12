@@ -1,3 +1,4 @@
+#使わん
 from math import comb
 import os
 import os.path

@@ -11,7 +11,7 @@ import tifffile as tif
 
 def h5read(input_h5_dir, split):
 
-    f = h5py.File((f'{input_h5_dir}split_raw_bilateral_{split}_predictions.h5'), 'r')
+    f = h5py.File((f'{input_h5_dir}split_raw_bilateral_sD5_{split}_predictions.h5'), 'r')
     pre_dset = f['predictions']
 
     channel, z_num, x_num, y_num = map(int, pre_dset.shape)
